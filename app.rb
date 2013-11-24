@@ -33,4 +33,9 @@ class RemoteShadeControlApp < Sinatra::Base
     @shades.down
     redirect to('/')
   end
+  
+  get '/auto' do
+    @shades.auto_raise_and_lower
+    redirect to('/')
+  end
 end

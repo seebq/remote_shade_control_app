@@ -1,0 +1,18 @@
+development:
+    shade_button_up: 'echo "up"'
+    shade_button_stop: 'echo "stop"'
+    shade_button_down: 'echo "down"'
+    raise_up_time: 10 minutes before
+    lower_down_time: 15 minutes after
+test:
+    shade_button_up: 'echo "up"'
+    shade_button_stop: 'echo "stop"'
+    shade_button_down: 'echo "down"'
+    raise_up_time: 10 minutes before
+    lower_down_time: 15 minutes after
+production:
+    shade_button_up: "./GPIO.sh 14"
+    shade_button_stop: "./GPIO.sh 13"
+    shade_button_down: "./GPIO.sh 12"
+    raise_up_time: 10 minutes before
+    lower_down_time: 15 minutes after

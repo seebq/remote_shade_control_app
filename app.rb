@@ -1,18 +1,18 @@
 require 'sinatra'
 require 'sinatra/base'
+require 'yaml'
 
 require File.expand_path '../shades.rb', __FILE__
 
 set :bind, '0.0.0.0'
 
+ENV['RACK_ENV'] ||= "development"
+
 class RemoteShadeControlApp < Sinatra::Base
   
-  def test_mode?
-    ENV['RACK_ENV'] == 'test'
-  end
-  
   before do
-    @shades = Shades.new(test_mode?)
+    @settings = YAML.load_file("#{settings.root}/settings.yml")[ENV['RACK_ENV']]
+    @shades = Shades.new(@settings)
   end
   
   get '/' do

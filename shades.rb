@@ -1,14 +1,12 @@
 require 'date'
+require 'active_support/time'
+require 'chronic'
 require 'solareventcalculator'
 
 class Shades
   
-  def initialize(test_mode=false)
-    @test_mode = test_mode
-  end
-  
-  def test_mode?
-    @test_mode
+  def initialize(settings)
+    @settings = settings
   end
   
   def current_location
@@ -33,28 +31,70 @@ class Shades
     local_official_sunset.strftime("%-l:%M %P")
   end
   
-  def up
-    if test_mode?
-      return "up"
+  def morning?
+    # between midnight and noon
+    midnight = Time.now.midnight
+    noon = Time.now.midnight + 12.hours
+    return Time.now > midnight && Time.now < noon
+  end
+  
+  def afternoon?
+    # between noon and midnight tomorrow
+    noon = Time.now.midnight + 12.hours
+    tomorrow_midnight = Time.now.tomorrow.midnight
+    return Time.now > noon && Time.now < tomorrow_midnight
+  end
+  
+  def should_raise?
+    # * current time is equal to or past the raise up time
+    Time.now >= Chronic.parse("#{@settings['raise_up_time']} #{sunrise}")
+  end
+  
+  def should_lower?
+    # * current time is equal to or past the lower down time
+    Time.now >= Chronic.parse("#{@settings['lower_down_time']} #{sunset}")
+  end
+  
+  def lowered?
+    File.read('/tmp/.shades_state') == "down"
+  end
+  
+  def raised?
+    File.read('/tmp/.shades_state') == "up"
+  end
+  
+  def auto_raise_and_lower
+    if morning? && should_raise? && lowered?
+      auto_raise
+    elsif afternoon? && should_lower? && raised?
+      auto_lower
     else
-      `./GPIO.sh 14`
+      nil
     end
+  end
+  
+  def auto_raise
+    up
+    File.open('/tmp/.shades_state', 'w') {|f| f.write("up") }
+    return "up"
+  end
+  
+  def auto_lower
+    down
+    File.open('/tmp/.shades_state', 'w') {|f| f.write("down") }
+    return "down"
+  end
+  
+  def up
+    `#{@settings['shade_button_up']}`
   end
   
   def stop
-    if test_mode?
-      return "stop"
-    else
-      `./GPIO.sh 13`
-    end
+    `#{@settings['shade_button_stop']}`
   end
   
   def down
-    if test_mode?
-      return "down"
-    else
-      `./GPIO.sh 12`
-    end
+    `#{@settings['shade_button_down']}`
   end
   
 end

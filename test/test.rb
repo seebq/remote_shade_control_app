@@ -54,12 +54,90 @@ class RemoteShadeControlAppTest < MiniTest::Unit::TestCase
     
     Shades.stub :new, shades do
       get '/'
-      assert_match "The sun rises at 6:33 am", last_response.body
-      assert_match "The sun sets at 8:42 pm", last_response.body
+      assert_match "The sun rises at 6:33 am.", last_response.body
+      assert_match "The sun sets at 8:42 pm.", last_response.body
     end
   end
   
-  def test_should_know_when_to_raise_shade
+  # TODO use settings file
+  def test_should_show_raise_and_lower_settings
+    get '/'
+    assert_match "Shades will rise 10 minutes before sunrise.", last_response.body
+    assert_match "Shades will lower 15 minutes after sunset.", last_response.body
+  end
+  
+  describe Shades do
+    before do
+      @settings = YAML.load_file("#{RemoteShadeControlApp.settings.root}/settings.yml")[ENV['RACK_ENV']]
+      @shades = Shades.new(@settings)
+    end
+    
+    describe "when setup" do
+      it "knows current location" do
+        @shades.current_location.must_equal [BigDecimal.new("33.7773"), BigDecimal.new("-84.3366")]
+      end
+      
+      it "knows current timezone" do
+        @shades.current_timezone.must_equal 'America/New_York'
+      end
+      
+      it "knows morning" do
+        Timecop.freeze(Time.local(2013, 11, 24, 6, 14, 0)) # 2013-11-24 6:14:00 am
+        @shades.morning?.must_be :==, true, "6:14 am is in the morning"
+        Timecop.freeze(Time.local(2013, 11, 24, 21, 42, 0)) # 2013-11-24 9:42:00 pm
+        @shades.morning?.must_be :==, false, "9:42 pm not morning"
+      end
+      
+      it "knows afternoon" do
+        Timecop.freeze(Time.local(2013, 11, 24, 6, 14, 0)) # 2013-11-24 6:14:00 am
+        @shades.afternoon?.must_be :==, false, "6:14 am is not in the afternoon"
+        Timecop.freeze(Time.local(2013, 11, 24, 21, 42, 0)) # 2013-11-24 9:42:00 pm
+        @shades.afternoon?.must_be :==, true, "9:42 pm is afternoon"
+      end
+      
+      it "knows to raise at the right times" do
+        # on 11/24/2013 the sunrise is at 7:17 am
+        # settings say 10 minutes before, so should raise at 7:07 am
+        Timecop.freeze(Time.local(2013, 11, 24, 7, 2, 0)) # 2013-11-24 7:02:00 am
+        @shades.should_raise?.must_be :==, false
+        Timecop.freeze(Time.local(2013, 11, 24, 7, 6, 0)) # 2013-11-24 7:06:00 am
+        @shades.should_raise?.must_be :==, false
+        Timecop.freeze(Time.local(2013, 11, 24, 7, 7, 0)) # 2013-11-24 7:07:00 am
+        @shades.should_raise?.must_be :==, true
+        Timecop.freeze(Time.local(2013, 11, 24, 7, 8, 0)) # 2013-11-24 7:08:00 am
+        @shades.should_raise?.must_be :==, true
+      end
+      
+      it "knows to lower at the right times" do
+        # on 11/24/2013 the sunset is at 5:30 pm
+        # settings say 15 minutes after, so should lower at 5:45 pm
+        Timecop.freeze(Time.local(2013, 11, 24, 17, 3, 0)) # 2013-11-24 5:03:00 pm
+        @shades.should_lower?.must_be :==, false
+        Timecop.freeze(Time.local(2013, 11, 24, 17, 44, 0)) # 2013-11-24 5:44:00 pm
+        @shades.should_lower?.must_be :==, false
+        Timecop.freeze(Time.local(2013, 11, 24, 17, 45, 0)) # 2013-11-24 5:45:00 pm
+        @shades.should_lower?.must_be :==, true
+        Timecop.freeze(Time.local(2013, 11, 24, 17, 46, 0)) # 2013-11-24 5:46:00 pm
+        @shades.should_lower?.must_be :==, true
+      end
+      
+      it "automatically raises and lowers at the right times" do
+        @shades.auto_lower # make sure was called the night before
+        Timecop.freeze(Time.local(2013, 11, 24, 7, 2, 0)) # 2013-11-24 7:02:00 am
+        @shades.auto_raise_and_lower.must_be_nil
+        Timecop.freeze(Time.local(2013, 11, 24, 7, 7, 0)) # 2013-11-24 7:07:00 am
+        @shades.auto_raise_and_lower.must_be :==, "up"
+        
+        # subsequent calls do nothing
+        @shades.auto_raise_and_lower.must_be_nil
+        
+        Timecop.freeze(Time.local(2013, 11, 24, 17, 45, 0)) # 2013-11-24 5:45:00 pm
+        @shades.auto_raise_and_lower.must_be :==, "down"
+        
+        # subsequent calls do nothing
+        @shades.auto_raise_and_lower.must_be_nil
+      end
+    end
   end
   
 end

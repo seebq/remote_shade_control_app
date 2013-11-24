@@ -20,8 +20,8 @@
     <a class="btn btn-lg btn-default" href="/stop">stop</a><br>
     <a class="btn btn-lg btn-default" href="/down">down</a><br>
     <br>
-    The sun rises at <%= @shades.sunrise %><br>
-    The sun sets at <%= @shades.sunset %><br>
+    The sun rises at <%= @shades.sunrise %>. Shades will rise <%= @settings['raise_up_time'] %> sunrise.<br>
+    The sun sets at <%= @shades.sunset %>. Shades will lower <%= @settings['lower_down_time'] %> sunset.<br>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://code.jquery.com/jquery.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->

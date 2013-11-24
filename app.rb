@@ -1,22 +1,36 @@
 require 'sinatra'
+require 'sinatra/base'
+
+require File.expand_path '../shades.rb', __FILE__
 
 set :bind, '0.0.0.0'
 
-get '/' do
-  erb :index
-end
+class RemoteShadeControlApp < Sinatra::Base
+  
+  def test_mode?
+    ENV['RACK_ENV'] == 'test'
+  end
+  
+  before do
+    @shades = Shades.new(test_mode?)
+  end
+  
+  get '/' do
+    erb :index
+  end
 
-get '/up' do
-  `./GPIO.sh 14`
-  redirect to('/')
-end
+  get '/up' do
+    @shades.up
+    redirect to('/')
+  end
 
-get '/stop' do
-  `./GPIO.sh 13`
-  redirect to('/')
-end
+  get '/stop' do
+    @shades.stop
+    redirect to('/')
+  end
 
-get '/down' do
-  `./GPIO.sh 12`
-  redirect to('/')
+  get '/down' do
+    @shades.down
+    redirect to('/')
+  end
 end

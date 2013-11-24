@@ -15,4 +15,4 @@ production:
     shade_button_stop: "./GPIO.sh 13"
     shade_button_down: "./GPIO.sh 12"
     raise_up_time: 10 minutes before
-    lower_down_time: 15 minutes after
+    lower_down_time: 55 minutes after

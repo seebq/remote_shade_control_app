@@ -56,11 +56,11 @@ class Shades
   end
   
   def lowered?
-    File.read('/tmp/.shades_state') == "down"
+    File.read('/tmp/.shades_state').strip == "down"
   end
   
   def raised?
-    File.read('/tmp/.shades_state') == "up"
+    File.read('/tmp/.shades_state').strip == "up"
   end
   
   def auto_raise_and_lower

@@ -18,8 +18,48 @@ class RemoteShadeControlAppTest < MiniTest::Unit::TestCase
   end
   
   def test_should_send_up_command
-    get '/up'
-    assert last_response.redirect?
+    shades = MiniTest::Mock.new
+    shades.expect :up, nil
+    
+    Shades.stub :new, shades do
+      get '/up'
+      assert last_response.redirect?
+    end
+  end
+  
+  def test_should_send_stop_command
+    shades = MiniTest::Mock.new
+    shades.expect :stop, nil
+    
+    Shades.stub :new, shades do
+      get '/stop'
+      assert last_response.redirect?
+    end
+  end
+
+  def test_should_send_down_command
+    shades = MiniTest::Mock.new
+    shades.expect :down, nil
+    
+    Shades.stub :new, shades do
+      get '/down'
+      assert last_response.redirect?
+    end
+  end
+  
+  def test_should_show_sunrise_and_sunset_time
+    shades = MiniTest::Mock.new
+    shades.expect :sunrise, "6:33 am"
+    shades.expect :sunset, "8:42 pm"
+    
+    Shades.stub :new, shades do
+      get '/'
+      assert_match "The sun rises at 6:33 am", last_response.body
+      assert_match "The sun sets at 8:42 pm", last_response.body
+    end
+  end
+  
+  def test_should_know_when_to_raise_shade
   end
   
 end

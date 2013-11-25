@@ -56,11 +56,11 @@ class Shades
   end
   
   def lowered?
-    File.read('/tmp/.shades_state').strip == "down"
+    File.open('/tmp/.shades_state', 'a+').read.strip == "down"
   end
   
   def raised?
-    File.read('/tmp/.shades_state').strip == "up"
+    File.open('/tmp/.shades_state', 'a+').read.strip == "up"
   end
   
   def auto_raise_and_lower
@@ -75,13 +75,13 @@ class Shades
   
   def auto_raise
     up
-    File.open('/tmp/.shades_state', 'w') {|f| f.write("up") }
+    File.open('/tmp/.shades_state', 'a+') {|f| f.write("up") }
     return "up"
   end
   
   def auto_lower
     down
-    File.open('/tmp/.shades_state', 'w') {|f| f.write("down") }
+    File.open('/tmp/.shades_state', 'a+') {|f| f.write("down") }
     return "down"
   end
   

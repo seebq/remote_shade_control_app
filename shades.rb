@@ -5,6 +5,8 @@ require 'solareventcalculator'
 
 class Shades
   
+  attr_accessor :settings
+  
   def initialize(settings)
     @settings = settings
   end
@@ -75,13 +77,13 @@ class Shades
   
   def auto_raise
     up
-    File.open('/tmp/.shades_state', 'a+') {|f| f.write("up") }
+    File.open('/tmp/.shades_state', 'w+') {|f| f.write("up") }
     return "up"
   end
   
   def auto_lower
     down
-    File.open('/tmp/.shades_state', 'a+') {|f| f.write("down") }
+    File.open('/tmp/.shades_state', 'w+') {|f| f.write("down") }
     return "down"
   end
   

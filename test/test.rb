@@ -122,10 +122,12 @@ class RemoteShadeControlAppTest < MiniTest::Unit::TestCase
       end
       
       it "automatically raises and lowers at the right times" do
+        Timecop.freeze(Time.local(2013, 11, 24, 6, 0, 0)) # 2013-11-24 6:00:00 am
+        
         @shades.auto_lower # make sure was called the night before
         Timecop.freeze(Time.local(2013, 11, 24, 7, 2, 0)) # 2013-11-24 7:02:00 am
         @shades.auto_raise_and_lower.must_be_nil
-        Timecop.freeze(Time.local(2013, 11, 24, 7, 7, 0)) # 2013-11-24 7:07:00 am
+        Timecop.freeze(Time.local(2013, 11, 24, 7, 7, 0)) # 2013-11-24 7:08:00 am
         @shades.auto_raise_and_lower.must_be :==, "up"
         
         # subsequent calls do nothing

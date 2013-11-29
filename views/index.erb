@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-
+    <link href="css/bootstrap-switch.css" rel="stylesheet">
+    
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -20,11 +21,26 @@
     <a class="btn btn-lg btn-default" href="/stop">stop</a><br>
     <a class="btn btn-lg btn-default" href="/down">down</a><br>
     <br>
+    <div>
+      <div id="auto-switch" class="make-switch has-switch" data-text-label="Auto">
+        <input type="checkbox" <%= @shades.auto_toggled? ? "checked" : '' %>>
+      </div>
+    </div>
+    <br>
     The sun rises at <%= @shades.sunrise %>. Shades will rise <%= @settings['raise_up_time'] %> sunrise.<br>
     The sun sets at <%= @shades.sunset %>. Shades will lower <%= @settings['lower_down_time'] %> sunset.<br>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://code.jquery.com/jquery.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap-switch.js"></script>
+    <script>
+      $('#auto-switch').on('switch-change', function (e, data) {
+          var $el = $(data.el)
+            , value = data.value;
+          // console.log(e, $el, value);
+          $.get( "/auto_toggle", { toggle: value } );
+      });
+    </script>
   </body>
 </html>

@@ -65,6 +65,10 @@ class Shades
     File.open('/tmp/.shades_state', 'a+').read.strip == "up"
   end
   
+  def auto_toggled?
+    File.open('/tmp/.shades_state', 'a+').read.strip != "off"
+  end
+  
   def auto_raise_and_lower
     if morning? && should_raise? && lowered?
       auto_raise
@@ -85,6 +89,20 @@ class Shades
     down
     File.open('/tmp/.shades_state', 'w+') {|f| f.write("down") }
     return "down"
+  end
+  
+  def toggle_auto_functionality(toggle)
+    if toggle == "true"
+      if morning?
+        File.open('/tmp/.shades_state', 'w+') {|f| f.write("up") }
+      else #afternoon?
+        File.open('/tmp/.shades_state', 'w+') {|f| f.write("down") }
+      end
+    elsif toggle == "false"
+      File.open('/tmp/.shades_state', 'w+') {|f| f.write("off") }
+    else
+      # do nothing
+    end
   end
   
   def up

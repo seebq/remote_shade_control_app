@@ -17,6 +17,12 @@ class RemoteShadeControlAppTest < MiniTest::Unit::TestCase
     assert_match "down", last_response.body
   end
   
+  def test_should_show_auto_switch
+    get '/'
+    assert last_response.ok?
+    assert_match "auto", last_response.body
+  end
+  
   def test_should_send_up_command
     shades = MiniTest::Mock.new
     shades.expect :up, nil
@@ -51,6 +57,7 @@ class RemoteShadeControlAppTest < MiniTest::Unit::TestCase
     shades = MiniTest::Mock.new
     shades.expect :sunrise, "6:33 am"
     shades.expect :sunset, "8:42 pm"
+    shades.expect :auto_toggled?, "true"
     
     Shades.stub :new, shades do
       get '/'
@@ -64,6 +71,11 @@ class RemoteShadeControlAppTest < MiniTest::Unit::TestCase
     get '/'
     assert_match "Shades will rise 10 minutes before sunrise.", last_response.body
     assert_match "Shades will lower 15 minutes after sunset.", last_response.body
+  end
+  
+  def test_can_toggle_the_automatic_functionality
+    get '/auto_toggle', :toggle => "true"
+    assert last_response.redirect?
   end
   
   describe Shades do
@@ -138,6 +150,16 @@ class RemoteShadeControlAppTest < MiniTest::Unit::TestCase
         
         # subsequent calls do nothing
         @shades.auto_raise_and_lower.must_be_nil
+      end
+      
+      it "knows if it's toggled to automatically raise and lower" do
+        assert @shades.auto_toggled? # on by default
+        
+        @shades.toggle_auto_functionality("false")
+        assert @shades.auto_toggled?.must_be :==, false
+        
+        @shades.toggle_auto_functionality("true")
+        assert @shades.auto_toggled?.must_be :==, true
       end
     end
   end

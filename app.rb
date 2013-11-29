@@ -38,4 +38,9 @@ class RemoteShadeControlApp < Sinatra::Base
     @shades.auto_raise_and_lower
     redirect to('/')
   end
+  
+  get '/auto_toggle' do
+    @shades.toggle_auto_functionality(params[:toggle])
+    redirect to('/')
+  end
 end

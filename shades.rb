@@ -5,7 +5,17 @@ require 'solareventcalculator'
 
 class Shades
   
+  SHADES_STATE_FILE = '/tmp/.shades_state'
+  
   attr_accessor :settings
+  
+  def shades_state=(new_shades_state)
+    File.open(SHADES_STATE_FILE, 'w+') {|f| f.write(new_shades_state)}
+  end
+  
+  def shades_state
+    File.open(SHADES_STATE_FILE, 'a+').read.strip
+  end
   
   def initialize(settings)
     @settings = settings
@@ -58,15 +68,15 @@ class Shades
   end
   
   def lowered?
-    File.open('/tmp/.shades_state', 'a+').read.strip == "down"
+    self.shades_state == "down" || self.shades_state == "on"
   end
   
   def raised?
-    File.open('/tmp/.shades_state', 'a+').read.strip == "up"
+    self.shades_state == "up" || self.shades_state == "on"
   end
   
   def auto_toggled?
-    File.open('/tmp/.shades_state', 'a+').read.strip != "off"
+    self.shades_state != "off"
   end
   
   def auto_raise_and_lower
@@ -81,25 +91,21 @@ class Shades
   
   def auto_raise
     up
-    File.open('/tmp/.shades_state', 'w+') {|f| f.write("up") }
+    self.shades_state = "up"
     return "up"
   end
   
   def auto_lower
     down
-    File.open('/tmp/.shades_state', 'w+') {|f| f.write("down") }
+    self.shades_state = "down"
     return "down"
   end
   
   def toggle_auto_functionality(toggle)
     if toggle == "true"
-      if morning?
-        File.open('/tmp/.shades_state', 'w+') {|f| f.write("up") }
-      else #afternoon?
-        File.open('/tmp/.shades_state', 'w+') {|f| f.write("down") }
-      end
+      self.shades_state = "on"
     elsif toggle == "false"
-      File.open('/tmp/.shades_state', 'w+') {|f| f.write("off") }
+      self.shades_state = "off"
     else
       # do nothing
     end

@@ -76,6 +76,12 @@ class RemoteShadeControlAppTest < MiniTest::Unit::TestCase
   def test_can_toggle_the_automatic_functionality
     get '/auto_toggle', :toggle => "true"
     assert last_response.redirect?
+    get '/'
+    assert_match '<input type="checkbox" checked>', last_response.body
+    get '/auto_toggle', :toggle => "false"
+    assert last_response.redirect?
+    get '/'
+    assert_match '<input type="checkbox" >', last_response.body
   end
   
   describe Shades do
@@ -139,7 +145,7 @@ class RemoteShadeControlAppTest < MiniTest::Unit::TestCase
         @shades.auto_lower # make sure was called the night before
         Timecop.freeze(Time.local(2013, 11, 24, 7, 2, 0)) # 2013-11-24 7:02:00 am
         @shades.auto_raise_and_lower.must_be_nil
-        Timecop.freeze(Time.local(2013, 11, 24, 7, 7, 0)) # 2013-11-24 7:08:00 am
+        Timecop.freeze(Time.local(2013, 11, 24, 7, 7, 0)) # 2013-11-24 7:07:00 am
         @shades.auto_raise_and_lower.must_be :==, "up"
         
         # subsequent calls do nothing
@@ -153,7 +159,14 @@ class RemoteShadeControlAppTest < MiniTest::Unit::TestCase
       end
       
       it "knows if it's toggled to automatically raise and lower" do
-        assert @shades.auto_toggled? # on by default
+        @shades.shades_state = "off"
+        assert @shades.auto_toggled?.must_be :==, false
+        
+        @shades.shades_state = "down"
+        assert @shades.auto_toggled?.must_be :==, true
+        
+        @shades.shades_state = "on"
+        assert @shades.auto_toggled?.must_be :==, true
         
         @shades.toggle_auto_functionality("false")
         assert @shades.auto_toggled?.must_be :==, false

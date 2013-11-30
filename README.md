@@ -25,6 +25,10 @@ The settings file uses Chronic for parsing, so it understands all kinds of state
     1 hour before
     30 minutes after
 
+To fully automate the app, the /auto URL should be "pinged" regularly.  Easiest is to set a crontab that will hit the URL every minute.  Add this to your /etc/crontab to run every minute:
+
+    * *     * * *   root    curl http://localhost/auto
+
 Screenshot:
 
 ![Remote Shade Control](http://f.cl.ly/items/0K3B0g462E0f0r2i221R/remote_shade_control.png "Remote Shade Control Screenshot")

@@ -1,18 +1,90 @@
 development:
-    shade_button_up: 'echo "up"'
-    shade_button_stop: 'echo "stop"'
-    shade_button_down: 'echo "down"'
-    raise_up_time: 10 minutes before
-    lower_down_time: 15 minutes after
+  shades:
+    - name: "Living Room"
+      id: "living_room"
+      shade_button_up: 'echo "up"'
+      shade_button_stop: ""
+      shade_button_down: 'echo "down"'
+      raise_up_time: 10 minutes before
+      lower_down_time: 15 minutes after
+    - name: "Office Nook"
+      id: "office_nook"
+      shade_button_up: 'echo "up"'
+      shade_button_stop: ""
+      shade_button_down: 'echo "down"'
+      raise_up_time: 10 minutes before
+      lower_down_time: 15 minutes after
+    - name: "Upstairs Scrim (light)"
+      id: "upstairs_scrim_light"
+      shade_button_up: 'echo "up"'
+      shade_button_stop: ""
+      shade_button_down: 'echo "down"'
+      raise_up_time: 10 minutes before
+      lower_down_time: 15 minutes after
+    - name: "Upstairs Dark (blackout)"
+      id: "upstairs_dark_blackout"
+      shade_button_up: 'echo "up"'
+      shade_button_stop: ""
+      shade_button_down: 'echo "down"'
+      raise_up_time: 10 minutes before
+      lower_down_time: 15 minutes after
 test:
-    shade_button_up: 'echo "up"'
-    shade_button_stop: 'echo "stop"'
-    shade_button_down: 'echo "down"'
-    raise_up_time: 10 minutes before
-    lower_down_time: 15 minutes after
+  shades:
+    - name: "Living Room"
+      id: "living_room"
+      shade_button_up: 'echo "up"'
+      shade_button_stop: ""
+      shade_button_down: 'echo "down"'
+      raise_up_time: 10 minutes before
+      lower_down_time: 15 minutes after
+    - name: "Office Nook"
+      id: "office_nook"
+      shade_button_up: 'echo "up"'
+      shade_button_stop: ""
+      shade_button_down: 'echo "down"'
+      raise_up_time: 10 minutes before
+      lower_down_time: 15 minutes after
+    - name: "Upstairs Scrim (light)"
+      id: "upstairs_scrim_light"
+      shade_button_up: 'echo "up"'
+      shade_button_stop: ""
+      shade_button_down: 'echo "down"'
+      raise_up_time: 10 minutes before
+      lower_down_time: 15 minutes after
+    - name: "Upstairs Dark (blackout)"
+      id: "upstairs_dark_blackout"
+      shade_button_up: 'echo "up"'
+      shade_button_stop: ""
+      shade_button_down: 'echo "down"'
+      raise_up_time: 10 minutes before
+      lower_down_time: 15 minutes after
 production:
-    shade_button_up: "./GPIO.sh 14"
-    shade_button_stop: "./GPIO.sh 13"
-    shade_button_down: "./GPIO.sh 12"
-    raise_up_time: 10 minutes before
-    lower_down_time: 55 minutes after
+  shades:
+    - name: "Living Room"
+      id: "living_room"
+      shade_button_up: "./GPIO.sh 14"
+      shade_button_stop: "./GPIO.sh 13"
+      shade_button_down: "./GPIO.sh 12"
+      raise_up_time: 30 minutes before
+      lower_down_time: 30 minutes after
+    - name: "Office Nook"
+      id: "office_nook"
+      shade_button_up: "./write_packet.rb 2 up"
+      shade_button_stop: ""
+      shade_button_down: "./write_packet.rb 2 down"
+      raise_up_time: 30 minutes before
+      lower_down_time: 30 minutes after
+    - name: "Upstairs Scrim (light)"
+      id: "upstairs_scrim_light"
+      shade_button_up: "./write_packet.rb 7 up"
+      shade_button_stop: ""
+      shade_button_down: "./write_packet.rb 7 down"
+      raise_up_time: 30 minutes before
+      lower_down_time: 30 minutes after
+    - name: "Upstairs Dark (blackout)"
+      id: "upstairs_dark_blackout"
+      shade_button_up: "./write_packet.rb 3 up"
+      shade_button_stop: ""
+      shade_button_down: "./write_packet.rb 3 down"
+      raise_up_time: 30 minutes before
+      lower_down_time: 30 minutes after

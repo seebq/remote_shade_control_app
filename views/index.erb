@@ -17,30 +17,33 @@
     <![endif]-->
   </head>
   <body>
-    <a class="btn btn-lg btn-default" href="/up">up</a><br>
-    <a class="btn btn-lg btn-default" href="/stop">stop</a><br>
-    <a class="btn btn-lg btn-default" href="/down">down</a><br>
-    <br>
-    <div>
-      <div id="auto-switch" class="make-switch has-switch" data-text-label="Auto">
-        <input type="checkbox" <%= @shades.auto_toggled? ? "checked" : '' %>>
+    <% @shades.each do |name, shade| %>
+      <h1><%= shade.name %></h1>
+      <a class="btn btn-lg btn-default" href="/shades/<%= shade.id %>/up">up</a><br>
+      <a class="btn btn-lg btn-default" href="/shades/<%= shade.id %>/stop">stop</a><br>
+      <a class="btn btn-lg btn-default" href="/shades/<%= shade.id %>/down">down</a><br>
+      <br>
+      <div>
+        <div id="auto-switch-<%= shade.id %>" class="make-switch has-switch" data-text-label="Auto">
+          <input type="checkbox" <%= shade.auto_toggled? ? "checked" : '' %>>
+        </div>
       </div>
-    </div>
-    <br>
-    The sun rises at <%= @shades.sunrise %>. Shades will rise <%= @settings['raise_up_time'] %> sunrise.<br>
-    The sun sets at <%= @shades.sunset %>. Shades will lower <%= @settings['lower_down_time'] %> sunset.<br>
+      <br>
+      The sun rises at <%= shade.sunrise %>. Shades will rise <%= shade.raise_up_time %> sunrise.<br>
+      The sun sets at <%= shade.sunset %>. Shades will lower <%= shade.lower_down_time %> sunset.<br>
+      <script>
+        $('#auto-switch-<%= shade.id %>').on('switch-change', function (e, data) {
+            var $el = $(data.el)
+              , value = data.value;
+            // console.log(e, $el, value);
+            $.get( "/shades/<%= shade.id %>/auto_toggle", { toggle: value } );
+        });
+      </script>
+    <% end %>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://code.jquery.com/jquery.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
     <script src="js/bootstrap-switch.js"></script>
-    <script>
-      $('#auto-switch').on('switch-change', function (e, data) {
-          var $el = $(data.el)
-            , value = data.value;
-          // console.log(e, $el, value);
-          $.get( "/auto_toggle", { toggle: value } );
-      });
-    </script>
   </body>
 </html>

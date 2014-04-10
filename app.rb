@@ -21,24 +21,19 @@ class RemoteShadeControlApp < Sinatra::Base
   get '/' do
     erb :index
   end
-
+  
   get '/shades/:id/up' do
     @shades[params[:id]].up
     redirect to('/')
   end
-
+  
   get '/shades/:id/stop' do
     @shades[params[:id]].stop
     redirect to('/')
   end
-
+  
   get '/shades/:id/down' do
     @shades[params[:id]].down
-    redirect to('/')
-  end
-  
-  get '/shades/:id/auto' do
-    @shades[params[:id]].auto_raise_and_lower
     redirect to('/')
   end
   
@@ -47,14 +42,11 @@ class RemoteShadeControlApp < Sinatra::Base
     redirect to('/')
   end
   
-  # get '/auto' do
-  #   @shades.auto_raise_and_lower
-  #   redirect to('/')
-  # end
-  # 
-  # get '/auto_toggle' do
-  #   @shades.toggle_auto_functionality(params[:toggle])
-  #   redirect to('/')
-  # end
-
+  get '/auto' do
+    @shades.each do |name, shade|
+      shade.auto_raise_and_lower
+    end
+    redirect to('/')
+  end
+  
 end

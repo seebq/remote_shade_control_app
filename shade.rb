@@ -9,32 +9,28 @@ class Shade
 
   attr_accessor :name
   attr_accessor :id
-  attr_accessor :shade_button_up
-  attr_accessor :shade_button_stop
-  attr_accessor :shade_button_down
   attr_accessor :raise_up_time
   attr_accessor :lower_down_time
+  attr_accessor :shade_state_file_name
   
   def initialize(options)
     @name = options["name"]
     @id = options["id"]
-    @shade_button_up = options["shade_button_up"]
-    @shade_button_stop = options["shade_button_stop"]
-    @shade_button_down = options["shade_button_down"]
     @raise_up_time = options["raise_up_time"]
     @lower_down_time = options["lower_down_time"]
+    @shade_state_file_name = "/tmp/#{id}"
     # create state file if it doesn't exist with auto on
-    # if !File.exists?(self.shade_state_file_name)
-    #   File.open(self.shade_state_file_name, 'w+') {|f| f.write("on")}
-    # end
+    if !File.exists?(@shade_state_file_name)
+      File.open(@shade_state_file_name, 'w+') {|f| f.write("on")}
+    end
   end
   
   def shade_state=(new_shade_state)
-    File.open("/tmp/#{id}", 'w+') {|f| f.write(new_shade_state)}
+    File.open(@shade_state_file_name, 'w+') {|f| f.write(new_shade_state)}
   end
   
   def shade_state
-    File.open("/tmp/#{id}", 'a+').read.strip
+    File.open(@shade_state_file_name, 'a+').read.strip
   end
   
   def current_location
@@ -128,15 +124,15 @@ class Shade
   end
   
   def up
-    `#{@shade_button_up}`
+    # implemented at the subclass level
   end
   
   def stop
-    `#{@shade_button_stop}`
+    # implemented at the subclass level
   end
   
   def down
-    `#{@shade_button_down}`
+    # implemented at the subclass level
   end
   
 end

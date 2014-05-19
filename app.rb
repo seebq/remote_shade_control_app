@@ -3,6 +3,7 @@ require 'sinatra/base'
 require 'yaml'
 
 require File.expand_path '../shade.rb', __FILE__
+Dir["./shades/*.rb"].each {|file| require file }
 
 set :bind, '0.0.0.0'
 
@@ -14,7 +15,8 @@ class RemoteShadeControlApp < Sinatra::Base
     @settings = YAML.load_file("#{settings.root}/settings.yml")[ENV['RACK_ENV']]
     @shades = {}
     @settings["shades"].each do |shade|
-      @shades[shade["id"]] = Shade.new(shade)
+      # create a hash of shades and load the type, i.e. SomfyShade.new() with settings
+      @shades[shade["id"]] = eval(shade["shade_type"]).new(shade)
     end
   end
   

@@ -6,11 +6,15 @@ Tiny web app (sinatra) to control shades (curtains, drapes) via hardware control
 Configure the file via the settings.yml:
 
     production:
-        shade_button_up: "./GPIO.sh 14"
-        shade_button_stop: "./GPIO.sh 13"
-        shade_button_down: "./GPIO.sh 12"
-        raise_up_time: 10 minutes before
-        lower_down_time: 55 minutes after
+        shades:
+          - name: "Living Room"
+            id: "living_room"
+            shade_type: "SomfyShade"
+            channel: "2"
+            raise_up_time: 30 minutes before
+            lower_down_time: 30 minutes after
+
+Shades may have additional settings, see the specific shades libraries for details.
 
 To run the test suite:
 
